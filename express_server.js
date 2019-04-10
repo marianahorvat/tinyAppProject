@@ -51,6 +51,14 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${randShortURL}`);
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {      http://localhost:8080/urls/b2xVn2/delete
+  var shortUrlName = req.params.shortURL;
+  console.log("ShortURLName", shortUrlName)
+  console.log("url Database", urlDatabase)
+  delete urlDatabase[shortUrlName];
+  res.redirect(`/urls`);
+});
+
 function generateRandomString() {
   let randomCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
   let randomNumber = "";

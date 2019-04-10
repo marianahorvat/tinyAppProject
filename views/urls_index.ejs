@@ -14,12 +14,18 @@
   <a href="">Create New TinyURL</a>
   <h3>My URLs</h3>
 
-  <ul>
-    <% for(urlElem in urls){ %>
-    <li> <%= urlElem %> <%= urls[urlElem]%></li></a>
-    <% } %>
-  </ul>
-  <a href=""></a>
+    <ul>
+      <% for(urlElem in urls){ %>
+        <form method="POST" action= <%= `/urls/${urlElem}/delete` %>>
+        <li> 
+          <%= urlElem %> <%= urls[urlElem]%> 
+          <button type="submit">Delete short URL</button>
+        </li>
+        </form>
+      <% } %>
+    </ul>
+    <a href=""></a>
+  
 
     <!-- Add EJS code here -->
 </body>
