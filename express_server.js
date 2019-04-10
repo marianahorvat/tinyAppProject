@@ -51,13 +51,21 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${randShortURL}`);
 });
 
-app.post("/urls/:shortURL/delete", (req, res) => {      http://localhost:8080/urls/b2xVn2/delete
+app.post("/urls/:shortURL/delete", (req, res) => {      //   Delete shortURL http://localhost:8080/urls/
   var shortUrlName = req.params.shortURL;
-  console.log("ShortURLName", shortUrlName)
-  console.log("url Database", urlDatabase)
   delete urlDatabase[shortUrlName];
   res.redirect(`/urls`);
 });
+
+app.get("/urls/:id" , (req, res) => {      // display the form from urls_show
+  res.render("urls_show", {shortURL: req.params.id});
+ });
+ 
+ app.post("/urls/:id", (req, res) => {     //update URL
+  let change = req.body.longURL;
+  urlDatabase[req.params.id] = change;
+  res.redirect("/urls");
+ });
 
 function generateRandomString() {
   let randomCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
