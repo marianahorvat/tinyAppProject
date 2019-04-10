@@ -10,11 +10,16 @@
 </head>
 <body style="font-size:20px; padding:50px;">
 
+  <% include partials/_header %>
+  <a href="">Create New TinyURL</a>
+  <h3>My URLs</h3>
+
   <ul>
     <% for(urlElem in urls){ %>
-    <a href = 'Links'><li> <%= urlElem %> <%= urls[urlElem]%></li></a>
+    <li> <%= urlElem %> <%= urls[urlElem]%></li></a>
     <% } %>
- </ul>
+  </ul>
+  <a href=""></a>
 
     <!-- Add EJS code here -->
 </body>
