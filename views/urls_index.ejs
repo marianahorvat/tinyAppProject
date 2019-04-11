@@ -16,16 +16,16 @@
 
     <ul>
       <% for(urlElem in urls){ %>
-        <form method="POST" action= <%= `/urls/${urlElem}/delete` %>>
+        <form method="POST" action= <%= `/urls/${urlElem}/delete` %>  >
+          <a href= "/urls/<%= urlElem%>">Edit</a>
         <li> 
           <%= urlElem %> <%= urls[urlElem]%> 
           <button type="submit">Delete short URL</button>
         </li>
         </form>
       <% } %>
+
     </ul>
-    <a href=""></a>
-  
 
     <!-- Add EJS code here -->
 </body>

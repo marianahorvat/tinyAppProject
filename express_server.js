@@ -71,6 +71,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {      //   Delete shortURL htt
   res.redirect(`/urls`);
 });
 
+app.post("/urls/:shortURL/update", (req,res) => {
+  delete urlDatabase[req.params.shortURL];
+  urlDatabase[req.params.shortURL] = req.body.longURL;
+  res.redirect(`/urls`);
+});
+
 app.get("/urls/:id" , (req, res) => {      // display the form from urls_show
   res.render("urls_show", {shortURL: req.params.id});
  });

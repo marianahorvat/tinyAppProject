@@ -14,12 +14,14 @@
     <% include partials/_header %>
     <a href=""><p>Create New TinyURL</p></a>
 
-    <form method="POST" action= "/urls/<%=shortURL %>">
+    
       <h3>TinyURL for <%= longURL %></h3>
       <h4><%= shortURL %></h4>
-
-      <input type="text" id="name" name="longURL" placeholder="Enter URL" />
-      <button type="submit">Edit</button>
+      <form method="POST" action= "/urls/<%= shortURL %>">
+        <div class="form-group up">
+          <input type="text" id="name" name="longURL" placeholder="Enter URL"></input>
+          <button type="submit">Edit</button>
+        </div>
     </form>
 
  </ul> 
