@@ -15,8 +15,40 @@ var urlDatabase = {
 const bodyParser = require("body-parser");   //This should be declared before all of the routes
 app.use(bodyParser.urlencoded({extended: true}));
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
+// newUser = function(username) {
+//   //console.log(“function running”);
+//   for (let newUser in user) {
+//    console.log();
+//    if (user[newUser].email === username) {
+//     return user[newUser];
+//      }
+//    }
+//   };
+
+function findUserByEmail(email, users) {
+  for (var user_ID in users) {
+    if (email === users[user_ID]["email"]) {
+      return false;
+    }
+  }
+  return true;
+};
+
 app.get("/urls/new", (req, res) => { 
-  let templateVars = {username: req.cookies["username"]}                    //    http://localhost:8080/urls/new
+  let templateVars = {email: req.cookies["email"]}                    //    http://localhost:8080/urls/new
   res.render("urls_new", templateVars);                               //GET Route to Show the Form to the User
 });        //s/b before app.get("/urls/:id", ...) any calls to /urls/new will be handled by app.get("/urls/:id", ...) 
 
@@ -33,13 +65,22 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {                         //http://localhost:8080/urls
-  let templateVars = {username: req.cookies["username"], urls: urlDatabase };
+  console.log(req.cookies)
+  let userId = req.cookies['user_ID'];
+  console.log(userId);
+  let currentUserObject = users[userId];
+  let email;
+  if (currentUserObject) {
+    email = currentUserObject.email;
+  }
+  let templateVars = {email: email, urls: urlDatabase };
+  
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {  //   http://localhost:8080/urls/b2xVn2
   var shortUrlName = req.params.shortURL;
-  let templateVars = {username: req.cookies["username"], shortURL: req.params.shortURL, longURL: urlDatabase[shortUrlName]};   /* What goes here? */ 
+  let templateVars = {email: req.cookies["email"], shortURL: req.params.shortURL, longURL: urlDatabase[shortUrlName]};   /* What goes here? */ 
   res.render("urls_show", templateVars);
 });
 
@@ -47,6 +88,32 @@ app.get("/u/:shortURL", (req, res) => {  //shorter version for our redirect link
   var shortUrlName = req.params.shortURL;   //   http://localhost:8080/u/b2xVn2
   const longURL = urlDatabase[shortUrlName];
   res.redirect(longURL);
+});
+
+app.get("/register", (req, res) => {  //   http://localhost:8080/register
+  res.render("urls_register"); //returns the register template
+});
+
+app.post("/register", (req, res) => {
+  let email = req.body.email;
+  let password = req.body.password;
+
+  if (!email || !password) {
+    res.statusCode = 400;
+    res.end("Unknown");
+  } else if (findUserByEmail(email, users) === true) {
+    let user_ID = generateRandomString();
+    users[user_ID] = {id: user_ID,
+                      email: email,
+                      password: password}
+
+    cookieParser.JSONCookie(user_ID)
+    res.cookie("user_ID", user_ID);
+    res.redirect("/urls");
+  } else {
+    res.statusCode = 400;
+    res.end("Unknown");
+  }
 });
 
 app.post("/urls", (req, res) => {
