@@ -50,7 +50,10 @@ function findUserByEmail(email, users) {
 };
 
 app.get("/urls/new", (req, res) => { 
-  let templateVars = {email: req.cookies["email"], urls: urlDatabase}                    //    http://localhost:8080/urls/new
+  let userId = req.cookies['user_ID'];
+  let userEmail = req.cookies['user_email'];
+  let currentUserObject = users[userId];
+  let templateVars = {user: currentUserObject, urls: urlDatabase, 'user.email': userEmail }                    //    http://localhost:8080/urls/new
   res.render("urls_new", templateVars);                               //GET Route to Show the Form to the User
 });        //s/b before app.get("/urls/:id", ...) any calls to /urls/new will be handled by app.get("/urls/:id", ...) 
 
@@ -76,7 +79,7 @@ app.get("/urls", (req, res) => {                         //http://localhost:8080
     email = currentUserObject.email;
   }
   console.log("Current User Object is: ",currentUserObject);
-  let templateVars = {email: email, urls: urlDatabase };
+  let templateVars = {user: currentUserObject, urls: urlDatabase, 'user.email': email };
   console.log("Users Database is: ",users)
   
   res.render("urls_index", templateVars);
@@ -103,13 +106,17 @@ app.post("/login", (req,res) => {                      //http://localhost:8080/u
         res.end("Unknown tttt");
       } else {
         res.cookie("user_ID", currentUserObject.id);
+        res.cookie("user_email", currentUserObject.email);
         res.redirect("/urls");
     } 
 });
 
 app.get("/urls/:shortURL", (req, res) => {  //   http://localhost:8080/urls/b2xVn2
   var shortUrlName = req.params.shortURL;
-  let templateVars = {email: req.cookies["email"], shortURL: req.params.shortURL, longURL: urlDatabase[shortUrlName], urls: urlDatabase };   /* What goes here? */ 
+  let userId = req.cookies['user_ID'];
+  let userEmail = req.cookies['user_email'];
+  let currentUserObject = users[userId];
+  let templateVars = {user: currentUserObject, shortURL: req.params.shortURL, longURL: urlDatabase[shortUrlName], urls: urlDatabase, 'user.email': userEmail };   /* What goes here? */ 
   res.render("urls_show", templateVars);
 });
 
@@ -137,7 +144,9 @@ app.post("/register", (req, res) => {
                       password: password}
 
     cookieParser.JSONCookie(user_ID)
+        res.cookie("user_email", currentUserObject.email);
     res.cookie("user_ID", user_ID);
+    res.cookie("user_email", currentUserObject.email);
     res.redirect("/urls");
   } else {
     res.statusCode = 400;
