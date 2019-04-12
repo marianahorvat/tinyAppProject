@@ -19,7 +19,7 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: "abc"
   },
  "user2RandomID": {
     id: "user2RandomID", 
@@ -40,8 +40,10 @@ const users = {
 
 function findUserByEmail(email, users) {
   for (var user_ID in users) {
+    console.log(user_ID)
     if (email === users[user_ID]["email"]) {
-      return true;
+      console.log(users[user_ID])
+      return users[user_ID];    // if email is in the database return true
     }
   }
   return false;
@@ -81,10 +83,28 @@ app.get("/urls", (req, res) => {                         //http://localhost:8080
 });
 
 app.get("/login", (req, res) => {                         //http://localhost:8080/urls
-  let templateVars = {email: req.cookies["email"], urls: urlDatabase };
-  console.log("Users Database is: ",users)
+  //let templateVars = {email: req.cookies["email"], urls: urlDatabase };
+  //console.log("Users Database is: ",users)
   
-  res.render("urls_login", templateVars);
+  res.render("urls_login");
+});
+
+app.post("/login", (req,res) => {                      //http://localhost:8080/urls/login
+  const email = req.body.email;
+  const password = req.body.password;
+  console.log(password)
+  const currentUserObject = findUserByEmail(email, users)
+
+    if (currentUserObject === false) {       // if user is not in the database
+      res.statusCode = 400;
+      res.end("Unknown");
+    } else if (password !== currentUserObject.password) {
+        res.statusCode = 400;
+        res.end("Unknown tttt");
+      } else {
+        res.cookie("user_ID", currentUserObject.id);
+        res.redirect("/urls");
+    } 
 });
 
 app.get("/urls/:shortURL", (req, res) => {  //   http://localhost:8080/urls/b2xVn2
@@ -132,14 +152,11 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/logout", (req,res) => {                     //Logout
-  res.clearCookie("username");
+  res.clearCookie("user_ID");
   res.redirect("/urls");
 });
 
-app.post("/login", (req,res) => {                      //http://localhost:8080/urls/login
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
-});
+
 
 app.post("/urls/:shortURL/delete", (req, res) => {      //   Delete shortURL http://localhost:8080/urls/
   var shortUrlName = req.params.shortURL;
