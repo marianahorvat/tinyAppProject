@@ -41,14 +41,14 @@ const users = {
 function findUserByEmail(email, users) {
   for (var user_ID in users) {
     if (email === users[user_ID]["email"]) {
-      return false;
+      return true;
     }
   }
-  return true;
+  return false;
 };
 
 app.get("/urls/new", (req, res) => { 
-  let templateVars = {email: req.cookies["email"]}                    //    http://localhost:8080/urls/new
+  let templateVars = {email: req.cookies["email"], urls: urlDatabase}                    //    http://localhost:8080/urls/new
   res.render("urls_new", templateVars);                               //GET Route to Show the Form to the User
 });        //s/b before app.get("/urls/:id", ...) any calls to /urls/new will be handled by app.get("/urls/:id", ...) 
 
@@ -65,22 +65,31 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {                         //http://localhost:8080/urls
-  console.log(req.cookies)
+  console.log("Req.cookies is: ",req.cookies)
   let userId = req.cookies['user_ID'];
-  console.log(userId);
+  console.log("userID is: ",userId);
   let currentUserObject = users[userId];
   let email;
   if (currentUserObject) {
     email = currentUserObject.email;
   }
+  console.log("Current User Object is: ",currentUserObject);
   let templateVars = {email: email, urls: urlDatabase };
+  console.log("Users Database is: ",users)
   
   res.render("urls_index", templateVars);
 });
 
+app.get("/login", (req, res) => {                         //http://localhost:8080/urls
+  let templateVars = {email: req.cookies["email"], urls: urlDatabase };
+  console.log("Users Database is: ",users)
+  
+  res.render("urls_login", templateVars);
+});
+
 app.get("/urls/:shortURL", (req, res) => {  //   http://localhost:8080/urls/b2xVn2
   var shortUrlName = req.params.shortURL;
-  let templateVars = {email: req.cookies["email"], shortURL: req.params.shortURL, longURL: urlDatabase[shortUrlName]};   /* What goes here? */ 
+  let templateVars = {email: req.cookies["email"], shortURL: req.params.shortURL, longURL: urlDatabase[shortUrlName], urls: urlDatabase };   /* What goes here? */ 
   res.render("urls_show", templateVars);
 });
 
@@ -101,7 +110,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     res.statusCode = 400;
     res.end("Unknown");
-  } else if (findUserByEmail(email, users) === true) {
+  } else if (findUserByEmail(email, users) === false) {
     let user_ID = generateRandomString();
     users[user_ID] = {id: user_ID,
                       email: email,
