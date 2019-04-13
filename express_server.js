@@ -28,16 +28,6 @@ const users = {
   }
 }
 
-// newUser = function(username) {
-//   //console.log(“function running”);
-//   for (let newUser in user) {
-//    console.log();
-//    if (user[newUser].email === username) {
-//     return user[newUser];
-//      }
-//    }
-//   };
-
 function findUserByEmail(email, users) {
   for (var user_ID in users) {
     console.log(user_ID)
@@ -49,12 +39,16 @@ function findUserByEmail(email, users) {
   return false;
 };
 
-app.get("/urls/new", (req, res) => { 
+app.get("/urls/new", (req, res) => {                //GET Route to Show the Form to the User
   let userId = req.cookies['user_ID'];
   let userEmail = req.cookies['user_email'];
   let currentUserObject = users[userId];
-  let templateVars = {user: currentUserObject, urls: urlDatabase, 'user.email': userEmail }                    //    http://localhost:8080/urls/new
-  res.render("urls_new", templateVars);                               //GET Route to Show the Form to the User
+  if (userId) {
+    let templateVars = {user: currentUserObject, urls: urlDatabase, 'user.email': userEmail }                    //    http://localhost:8080/urls/new
+    res.render("urls_new", templateVars); 
+  } else {
+    res.redirect("/login");
+  }
 });        //s/b before app.get("/urls/:id", ...) any calls to /urls/new will be handled by app.get("/urls/:id", ...) 
 
 app.get("/", (req, res) => {
