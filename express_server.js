@@ -7,9 +7,9 @@ var PORT = 8080; // default port 8080
 app.set("view engine", "ejs");   //Asking the app to use EJS as its templating engine
 app.use(cookieParser());         //Asking the app to use cookieParser parameter 
 
-var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+const urlDatabase = {
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 const bodyParser = require("body-parser");   //This should be declared before all of the routes
@@ -43,7 +43,7 @@ app.get("/urls/new", (req, res) => {                //GET Route to Show the Form
   let userId = req.cookies['user_ID'];
   let userEmail = req.cookies['user_email'];
   let currentUserObject = users[userId];
-  if (userId) {
+  if (userId) {                                             //Only Registered Users Can Shorten URLs
     let templateVars = {user: currentUserObject, urls: urlDatabase, 'user.email': userEmail }                    //    http://localhost:8080/urls/new
     res.render("urls_new", templateVars); 
   } else {
@@ -110,13 +110,17 @@ app.get("/urls/:shortURL", (req, res) => {  //   http://localhost:8080/urls/b2xV
   let userId = req.cookies['user_ID'];
   let userEmail = req.cookies['user_email'];
   let currentUserObject = users[userId];
-  let templateVars = {user: currentUserObject, shortURL: req.params.shortURL, longURL: urlDatabase[shortUrlName], urls: urlDatabase, 'user.email': userEmail };   /* What goes here? */ 
-  res.render("urls_show", templateVars);
+  let templateVars = {
+    user: currentUserObject,
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[shortUrlName].longURL,
+    urls: urlDatabase, 'user.email': userEmail };   /* What goes here? */ 
+  res.render("urls_show", templateVars);     //updated above longURL value (added ".longURL") to the new database structure to be passed to templates through templateVars
 });
 
 app.get("/u/:shortURL", (req, res) => {  //shorter version for our redirect links: //http://localhost:8080/u/shortURL
   var shortUrlName = req.params.shortURL;   //   http://localhost:8080/u/b2xVn2
-  const longURL = urlDatabase[shortUrlName];
+  const longURL = urlDatabase[shortUrlName].longURL;
   res.redirect(longURL);
 });
 
@@ -150,7 +154,12 @@ app.post("/register", (req, res) => {
 
 app.post("/urls", (req, res) => {
   let randShortURL = generateRandomString();
-  urlDatabase[randShortURL] = req.body.longURL;
+  console.log("urlDatabase before is: ",urlDatabase);
+  urlDatabase[randShortURL] = {     //Add a new userID (string) property to individual url objects within the urlDatabase collection.
+    longURL: req.body.longURL,
+    user_ID: req.cookies["user_ID"]  
+  };
+  console.log("urlDatabase after is: ",urlDatabase);
   res.redirect(`/urls/${randShortURL}`);
 });
 
@@ -158,8 +167,6 @@ app.post("/logout", (req,res) => {                     //Logout
   res.clearCookie("user_ID");
   res.redirect("/urls");
 });
-
-
 
 app.post("/urls/:shortURL/delete", (req, res) => {      //   Delete shortURL http://localhost:8080/urls/
   var shortUrlName = req.params.shortURL;

@@ -19,7 +19,7 @@
         <form method="POST" action= <%= `/urls/${urlElem}/delete` %>  >
           <a href= "/urls/<%= urlElem%>">Edit</a>
         <li> 
-          <%= urlElem %> <%= urls[urlElem]%> 
+          <%= urlElem %> <%= urls[urlElem].longURL %> 
           <button type="submit">Delete short URL</button>
         </li>
         </form>
