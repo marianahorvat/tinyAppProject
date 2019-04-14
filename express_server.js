@@ -94,22 +94,6 @@ app.get("/urls", (req, res) => {                         //http://localhost:8080
 }
 });
 
-
-// app.get("/urls", (req, res) => {
-//   let user_id = req.cookies.user_id;
-//   if (!user_id) {
-//     res.redirect("/login")
-//   } else {
-//     let templateVars = {
-//       'user_id': user_id,
-//       "urls": urlsForUser(user_id),
-//       "email": (users[user_id] ? users[user_id].email : users[user_id])
-//     };
-//     res.render("urls_index", templateVars);
-//   }
-
-// });
-
 app.get("/login", (req, res) => {                         //http://localhost:8080/urls
   //let templateVars = {email: req.cookies["email"], urls: urlDatabase };
   //console.log("Users Database is: ",users)
