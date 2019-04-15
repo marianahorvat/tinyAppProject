@@ -15,14 +15,19 @@
   <h3>My URLs</h3>
 
     <ul>
-      <% for(shortUrl in urls){ %>
-        <form method="POST" action= <%= `/urls/${shortUrl}/delete` %>  >
-          <a href= "/urls/<%= shortUrl%>">Edit</a>
-        <li> 
-          <%= shortUrl %> <%= urls[shortUrl].longURL %> 
-          <button type="submit">Delete short URL</button>
+
+      <% for(shortURL in urls){ %>
+        <li>  <%= shortURL %> <%= urls[shortURL].longURL %> 
+        
+          <a href= "/urls/<%= shortURL%>">
+            Edit
+          </a>
+    
+          <form method="POST" action= <%= `/urls/${shortURL}/delete` %>  >
+            <button type="submit">Delete short URL</button>
+          </form>
+          
         </li>
-        </form>
       <% } %>
 
     </ul>

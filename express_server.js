@@ -87,11 +87,11 @@ app.get("/urls", (req, res) => {                         //http://localhost:8080
     user: currentUserObject, 
     urls: urlsForUser(userId), 
     'user.email': email//(users[userId] ? users[userId].email : users[userId])
-  };  
-  res.render("urls_index", templateVars);
-} else {
-  res.redirect("/login");
-}
+    };  
+    res.render("urls_index", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.get("/login", (req, res) => {                         //http://localhost:8080/urls
